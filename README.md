@@ -1,4 +1,6 @@
 # shm
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/hslam/shm)](https://pkg.go.dev/github.com/hslam/shm)
+[![LICENSE](https://img.shields.io/github/license/hslam/shm.svg?style=flat-square)](https://github.com/hslam/shm/blob/master/LICENSE)
 
 Package shm provides a way to use shared memory.
 
