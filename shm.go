@@ -6,6 +6,19 @@ package shm
 
 import (
 	"os"
+	"syscall"
+)
+
+const (
+	// O_RDONLY opens the file read-only.
+	O_RDONLY int = syscall.O_RDONLY
+	// O_WRONLY opens the file write-only.
+	O_WRONLY int = syscall.O_WRONLY
+	// O_RDWR opens the file read-write.
+	O_RDWR int = syscall.O_RDWR
+
+	// O_CREATE creates a new file if none exists.
+	O_CREATE int = syscall.O_CREAT
 )
 
 // validSize returns the valid size.

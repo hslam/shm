@@ -16,16 +16,6 @@ const (
 
 	//IPC_RMID removes identifier
 	IPC_RMID = 0
-
-	// O_RDONLY opens the file read-only.
-	O_RDONLY int = syscall.O_RDONLY
-	// O_WRONLY opens the file write-only.
-	O_WRONLY int = syscall.O_WRONLY
-	// O_RDWR opens the file read-write.
-	O_RDWR int = syscall.O_RDWR
-
-	// O_CREATE creates a new file if none exists.
-	O_CREATE int = syscall.O_CREAT
 )
 
 // GetAt calls the shmget and shmat system call.
