@@ -40,7 +40,7 @@ func main() {
 }
 
 func writer() {
-	shmid, data, err := shm.GetAt(2, 128, shm.IPC_CREATE|0600)
+	shmid, data, err := shm.GetAt(2, 128, shm.IPC_CREAT|0600)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,9 +92,9 @@ func writer() {
 	if err != nil {
 		panic(err)
 	}
+	defer shm.Close(fd)
 	length := 128
 	shm.Ftruncate(fd, int64(length))
-	defer shm.Close(fd)
 	defer shm.Unlink(name)
 	data, err := mmap.Open(fd, 0, length, mmap.READ|mmap.WRITE)
 	if err != nil {
@@ -110,6 +110,7 @@ func reader() {
 	if err != nil {
 		panic(err)
 	}
+	defer shm.Close(fd)
 	data, err := mmap.Open(fd, 0, 128, mmap.READ)
 	if err != nil {
 		panic(err)

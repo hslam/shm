@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	// IPC_CREATE creates if key is nonexistent
-	IPC_CREATE = 00001000
+	// IPC_CREAT creates if key is nonexistent
+	IPC_CREAT = 00001000
 
 	//IPC_RMID removes identifier
 	IPC_RMID = 0
@@ -21,7 +21,7 @@ const (
 // GetAt calls the shmget and shmat system call.
 func GetAt(key int, size int, shmFlg int) (uintptr, []byte, error) {
 	if shmFlg == 0 {
-		shmFlg = IPC_CREATE | 0600
+		shmFlg = IPC_CREAT | 0600
 	}
 	shmid, _, errno := syscall.Syscall(SYS_SHMGET, uintptr(key), uintptr(validSize(int64(size))), uintptr(shmFlg))
 	if int(shmid) < 0 {

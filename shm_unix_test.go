@@ -16,7 +16,7 @@ func TestGetAt(t *testing.T) {
 	context := "Hello World"
 	done := make(chan struct{})
 	go func() {
-		shmid, data, err := GetAt(2, 128, IPC_CREATE|0600)
+		shmid, data, err := GetAt(2, 128, IPC_CREAT|0600)
 		if err != nil {
 			t.Error(err)
 		}
