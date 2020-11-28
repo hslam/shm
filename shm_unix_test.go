@@ -1,11 +1,10 @@
 // Copyright (c) 2020 Meng Huang (mhboy@outlook.com)
 // This package is licensed under a MIT license that can be found in the LICENSE file.
 
-// +build darwin linux dragonfly freebsd netbsd openbsd
-
 package shm
 
 import (
+	"github.com/hslam/ftok"
 	"github.com/hslam/mmap"
 	"os"
 	"testing"
@@ -16,7 +15,11 @@ func TestGetAt(t *testing.T) {
 	context := "Hello World"
 	done := make(chan struct{})
 	go func() {
-		shmid, data, err := GetAt(2, 128, IPC_CREAT|0600)
+		key, err := ftok.Ftok("/tmp", 0x22)
+		if err != nil {
+			panic(err)
+		}
+		shmid, data, err := GetAt(key, 128, IPC_CREAT|0600)
 		if err != nil {
 			t.Error(err)
 		}
@@ -27,7 +30,11 @@ func TestGetAt(t *testing.T) {
 		close(done)
 	}()
 	time.Sleep(time.Second)
-	_, data, err := GetAt(2, 128, 0600)
+	key, err := ftok.Ftok("/tmp", 0x22)
+	if err != nil {
+		panic(err)
+	}
+	_, data, err := GetAt(key, 128, 0600)
 	if err != nil {
 		t.Error(err)
 	}
@@ -42,7 +49,11 @@ func TestGetAtZeroFlag(t *testing.T) {
 	context := "Hello World"
 	done := make(chan struct{})
 	go func() {
-		shmid, data, err := GetAt(2, 128, 0)
+		key, err := ftok.Ftok("/tmp", 0x22)
+		if err != nil {
+			panic(err)
+		}
+		shmid, data, err := GetAt(key, 128, 0)
 		if err != nil {
 			t.Error(err)
 		}
@@ -53,7 +64,11 @@ func TestGetAtZeroFlag(t *testing.T) {
 		close(done)
 	}()
 	time.Sleep(time.Second)
-	_, data, err := GetAt(2, 128, 0600)
+	key, err := ftok.Ftok("/tmp", 0x22)
+	if err != nil {
+		panic(err)
+	}
+	_, data, err := GetAt(key, 128, 0600)
 	if err != nil {
 		t.Error(err)
 	}
@@ -73,10 +88,10 @@ func TestOpen(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
+		defer Unlink(name)
 		defer Close(fd)
 		length := 128
 		Ftruncate(fd, int64(length))
-		defer Unlink(name)
 		data, err := mmap.Open(fd, 0, length, mmap.READ|mmap.WRITE)
 		if err != nil {
 			panic(err)

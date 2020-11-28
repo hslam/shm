@@ -1,8 +1,6 @@
 // Copyright (c) 2020 Meng Huang (mhboy@outlook.com)
 // This package is licensed under a MIT license that can be found in the LICENSE file.
 
-// +build windows
-
 package shm
 
 import (
@@ -21,10 +19,10 @@ func TestOpen(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
+		defer Unlink(name)
 		defer Close(fd)
 		length := 128
 		Ftruncate(fd, int64(length))
-		defer Unlink(name)
 		data, err := mmap.Open(fd, 0, length, mmap.READ|mmap.WRITE)
 		if err != nil {
 			panic(err)
