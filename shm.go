@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Meng Huang (mhboy@outlook.com)
 // This package is licensed under a MIT license that can be found in the LICENSE file.
 
-// Package shm provides a way to use shared memory.
+// Package shm provides a way to use System V shared memory.
 package shm
 
 import (
