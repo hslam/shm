@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/hslam/shm)](https://goreportcard.com/report/github.com/hslam/shm)
 [![LICENSE](https://img.shields.io/github/license/hslam/shm.svg?style=flat-square)](https://github.com/hslam/shm/blob/master/LICENSE)
 
-Package shm provides a way to use shared memory.
+Package shm provides a way to use System V shared memory.
 
 ## Get started
 
@@ -18,42 +18,52 @@ import "github.com/hslam/shm"
 ```
 ### Usage
 #### SHM GET Example
+**Writer**
 ```go
 package main
 
 import (
 	"fmt"
+	"github.com/hslam/ftok"
 	"github.com/hslam/shm"
-	"log"
 	"time"
 )
 
 func main() {
-	done := make(chan struct{})
-	go func() {
-		writer()
-		close(done)
-	}()
-	time.Sleep(time.Second)
-	reader()
-	<-done
-}
-
-func writer() {
-	shmid, data, err := shm.GetAt(2, 128, shm.IPC_CREAT|0600)
+	key, err := ftok.Ftok("/tmp", 0x22)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
+	}
+	shmid, data, err := shm.GetAt(key, 128, shm.IPC_CREAT|0600)
+	if err != nil {
+		panic(err)
 	}
 	defer shm.Remove(shmid)
 	defer shm.Dt(data)
-	copy(data, []byte("Hello World"))
-	time.Sleep(time.Second * 2)
+	context := []byte("Hello World")
+	copy(data, context)
+	fmt.Println(string(data[:11]))
+	time.Sleep(time.Second * 10)
 }
+```
+**Reader**
+```go
+package main
 
-func reader() {
-	_, data, err := shm.GetAt(2, 128, 0600)
+import (
+	"fmt"
+	"github.com/hslam/ftok"
+	"github.com/hslam/shm"
+)
+
+func main() {
+	key, err := ftok.Ftok("/tmp", 0x22)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
+	}
+	_, data, err := shm.GetAt(key, 128, 0600)
+	if err != nil {
+		panic(err)
 	}
 	defer shm.Dt(data)
 	fmt.Println(string(data[:11]))
@@ -65,6 +75,7 @@ Hello World
 ```
 
 #### SHM OPEN Example
+**Writer**
 ```go
 package main
 
@@ -76,37 +87,39 @@ import (
 )
 
 func main() {
-	done := make(chan struct{})
-	go func() {
-		writer()
-		close(done)
-	}()
-	time.Sleep(time.Second)
-	reader()
-	<-done
-}
-
-func writer() {
 	name := "shared"
 	fd, err := shm.Open(name, shm.O_RDWR|shm.O_CREATE, 0600)
 	if err != nil {
 		panic(err)
 	}
+	defer shm.Unlink(name)
 	defer shm.Close(fd)
 	length := 128
 	shm.Ftruncate(fd, int64(length))
-	defer shm.Unlink(name)
 	data, err := mmap.Open(fd, 0, length, mmap.READ|mmap.WRITE)
 	if err != nil {
 		panic(err)
 	}
 	defer mmap.Munmap(data)
-	copy(data, []byte("Hello World"))
-	time.Sleep(time.Second * 2)
+	context := []byte("Hello World")
+	copy(data, context)
+	fmt.Println(string(data[:11]))
+	time.Sleep(time.Second * 10)
 }
+```
+**Reader**
+```go
+package main
 
-func reader() {
-	fd, err := shm.Open("shared", shm.O_RDONLY, 0600)
+import (
+	"fmt"
+	"github.com/hslam/mmap"
+	"github.com/hslam/shm"
+)
+
+func main() {
+	name := "shared"
+	fd, err := shm.Open(name, shm.O_RDONLY, 0600)
 	if err != nil {
 		panic(err)
 	}
