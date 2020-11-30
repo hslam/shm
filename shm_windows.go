@@ -26,7 +26,7 @@ func Unlink(name string) error {
 }
 
 // GetAt calls the shmget and shmat system call.
-func GetAt(key int, size int, shmFlg int) (uintptr, []byte, error) {
+func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
 	return 0, nil, errors.New("not supported")
 }
 
@@ -36,7 +36,7 @@ func Dt(b []byte) error {
 }
 
 // Remove removes the shm with the given id.
-func Remove(shmid uintptr) error {
+func Remove(shmid int) error {
 	return errors.New("not supported")
 }
 

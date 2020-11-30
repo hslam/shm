@@ -26,10 +26,10 @@ func TestGetAt(t *testing.T) {
 		defer Remove(shmid)
 		defer Dt(data)
 		copy(data, context)
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Millisecond * 200)
 		close(done)
 	}()
-	time.Sleep(time.Second)
+	time.Sleep(time.Millisecond * 100)
 	key, err := ftok.Ftok("/tmp", 0x22)
 	if err != nil {
 		panic(err)
@@ -60,10 +60,10 @@ func TestGetAtZeroFlag(t *testing.T) {
 		defer Remove(shmid)
 		defer Dt(data)
 		copy(data, context)
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Millisecond * 200)
 		close(done)
 	}()
-	time.Sleep(time.Second)
+	time.Sleep(time.Millisecond * 100)
 	key, err := ftok.Ftok("/tmp", 0x22)
 	if err != nil {
 		panic(err)
@@ -98,10 +98,10 @@ func TestOpen(t *testing.T) {
 		}
 		defer mmap.Munmap(data)
 		copy(data, []byte("Hello World"))
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Millisecond * 200)
 		close(done)
 	}()
-	time.Sleep(time.Second)
+	time.Sleep(time.Millisecond * 100)
 	fd, err := Open("shared", O_RDONLY, 0600)
 	if err != nil {
 		panic(err)
