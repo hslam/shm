@@ -34,20 +34,47 @@ const (
 	IPC_STAT = 2
 )
 
-// GetAt calls the shmget and shmat system call.
-func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
+// Get calls the shmget system call.
+func Get(key int, size int, shmFlg int) (int, error) {
 	if shmFlg == 0 {
 		shmFlg = IPC_CREAT | 0600
 	}
 	r1, _, errno := syscall.Syscall(SYS_SHMGET, uintptr(key), uintptr(validSize(int64(size))), uintptr(shmFlg))
 	shmid := int(r1)
 	if shmid < 0 {
-		return 0, nil, syscall.Errno(errno)
+		return shmid, syscall.Errno(errno)
 	}
+	return shmid, nil
+}
+
+// Attach calls the shmat system call.
+func Attach(shmid int, shmFlg int) (uintptr, error) {
 	shmaddr, _, errno := syscall.Syscall(SYS_SHMAT, uintptr(shmid), 0, uintptr(shmFlg))
 	if int(shmaddr) < 0 {
+		return shmaddr, syscall.Errno(errno)
+	}
+	return shmaddr, nil
+}
+
+// Detach calls the shmdt system call.
+func Detach(addr uintptr) error {
+	r1, _, errno := syscall.Syscall(SYS_SHMDT, addr, 0, 0)
+	if int(r1) < 0 {
+		return syscall.Errno(errno)
+	}
+	return nil
+}
+
+// GetAt calls the shmget and shmat system call.
+func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
+	shmid, err := Get(key, size, shmFlg)
+	if err != nil {
+		return shmid, nil, err
+	}
+	shmaddr, err := Attach(shmid, shmFlg)
+	if err != nil {
 		Remove(shmid)
-		return 0, nil, syscall.Errno(errno)
+		return shmid, nil, err
 	}
 	var sl = struct {
 		addr uintptr
@@ -58,13 +85,9 @@ func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
 	return shmid, b, nil
 }
 
-// Dt calls the shmdt system call.
+// Dt calls the shmdt system call with []byte b.
 func Dt(b []byte) error {
-	r1, _, errno := syscall.Syscall(SYS_SHMDT, uintptr(unsafe.Pointer(&b[0])), 0, 0)
-	if int(r1) < 0 {
-		return syscall.Errno(errno)
-	}
-	return nil
+	return Detach(uintptr(unsafe.Pointer(&b[0])))
 }
 
 // Remove removes the shm with the given id.
