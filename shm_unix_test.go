@@ -19,12 +19,12 @@ func TestGetAt(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		shmid, data, err := GetAt(key, 128, IPC_CREAT|0600)
+		shmid, data, err := GetAttach(key, 128, IPC_CREAT|0600)
 		if err != nil {
 			t.Error(err)
 		}
 		defer Remove(shmid)
-		defer Dt(data)
+		defer Detach(data)
 		copy(data, context)
 		time.Sleep(time.Millisecond * 200)
 		close(done)
@@ -34,11 +34,11 @@ func TestGetAt(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	_, data, err := GetAt(key, 128, 0600)
+	_, data, err := GetAttach(key, 128, 0600)
 	if err != nil {
 		t.Error(err)
 	}
-	defer Dt(data)
+	defer Detach(data)
 	if context != string(data[:11]) {
 		t.Error(context, string(data[:11]))
 	}
@@ -53,12 +53,12 @@ func TestGetAtZeroFlag(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		shmid, data, err := GetAt(key, 128, 0)
+		shmid, data, err := GetAttach(key, 128, 0)
 		if err != nil {
 			t.Error(err)
 		}
 		defer Remove(shmid)
-		defer Dt(data)
+		defer Detach(data)
 		copy(data, context)
 		time.Sleep(time.Millisecond * 200)
 		close(done)
@@ -68,11 +68,11 @@ func TestGetAtZeroFlag(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	_, data, err := GetAt(key, 128, 0600)
+	_, data, err := GetAttach(key, 128, 0600)
 	if err != nil {
 		t.Error(err)
 	}
-	defer Dt(data)
+	defer Detach(data)
 	if context != string(data[:11]) {
 		t.Error(context, string(data[:11]))
 	}

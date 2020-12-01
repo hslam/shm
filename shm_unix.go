@@ -47,8 +47,8 @@ func Get(key int, size int, shmFlg int) (int, error) {
 	return shmid, nil
 }
 
-// Attach calls the shmat system call.
-func Attach(shmid int, shmFlg int) (uintptr, error) {
+// At calls the shmat system call.
+func At(shmid int, shmFlg int) (uintptr, error) {
 	shmaddr, _, errno := syscall.Syscall(SYS_SHMAT, uintptr(shmid), 0, uintptr(shmFlg))
 	if int(shmaddr) < 0 {
 		return shmaddr, syscall.Errno(errno)
@@ -56,8 +56,8 @@ func Attach(shmid int, shmFlg int) (uintptr, error) {
 	return shmaddr, nil
 }
 
-// Detach calls the shmdt system call.
-func Detach(addr uintptr) error {
+// Dt calls the shmdt system call.
+func Dt(addr uintptr) error {
 	r1, _, errno := syscall.Syscall(SYS_SHMDT, addr, 0, 0)
 	if int(r1) < 0 {
 		return syscall.Errno(errno)
@@ -65,13 +65,13 @@ func Detach(addr uintptr) error {
 	return nil
 }
 
-// GetAt calls the shmget and shmat system call.
-func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
+// GetAttach calls the shmget and shmat system call.
+func GetAttach(key int, size int, shmFlg int) (int, []byte, error) {
 	shmid, err := Get(key, size, shmFlg)
 	if err != nil {
 		return shmid, nil, err
 	}
-	shmaddr, err := Attach(shmid, shmFlg)
+	shmaddr, err := At(shmid, shmFlg)
 	if err != nil {
 		Remove(shmid)
 		return shmid, nil, err
@@ -85,9 +85,9 @@ func GetAt(key int, size int, shmFlg int) (int, []byte, error) {
 	return shmid, b, nil
 }
 
-// Dt calls the shmdt system call with []byte b.
-func Dt(b []byte) error {
-	return Detach(uintptr(unsafe.Pointer(&b[0])))
+// Detach calls the shmdt system call with []byte b.
+func Detach(b []byte) error {
+	return Dt(uintptr(unsafe.Pointer(&b[0])))
 }
 
 // Remove removes the shm with the given id.

@@ -34,12 +34,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	shmid, data, err := shm.GetAt(key, 128, shm.IPC_CREAT|0600)
+	shmid, data, err := shm.GetAttach(key, 128, shm.IPC_CREAT|0600)
 	if err != nil {
 		panic(err)
 	}
 	defer shm.Remove(shmid)
-	defer shm.Dt(data)
+	defer shm.Detach(data)
 	context := []byte("Hello World")
 	copy(data, context)
 	fmt.Println(string(data[:11]))
@@ -61,11 +61,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_, data, err := shm.GetAt(key, 128, 0600)
+	_, data, err := shm.GetAttach(key, 128, 0600)
 	if err != nil {
 		panic(err)
 	}
-	defer shm.Dt(data)
+	defer shm.Detach(data)
 	fmt.Println(string(data[:11]))
 }
 ```
