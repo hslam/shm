@@ -1,6 +1,6 @@
 # shm
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/hslam/shm)](https://pkg.go.dev/github.com/hslam/shm)
-[![Build Status](https://travis-ci.org/hslam/shm.svg?branch=master)](https://travis-ci.org/hslam/shm)
+[![Build Status](https://api.travis-ci.com/hslam/shm.svg?branch=master)](https://travis-ci.com/hslam/shm)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hslam/shm)](https://goreportcard.com/report/github.com/hslam/shm)
 [![LICENSE](https://img.shields.io/github/license/hslam/shm.svg?style=flat-square)](https://github.com/hslam/shm/blob/master/LICENSE)
 
