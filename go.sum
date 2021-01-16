@@ -1,0 +1,4 @@
+github.com/hslam/ftok v1.0.0 h1:p+cxCKJ+A+exuYPTmr+tz036OMrEosvOHVsCPpzm3nI=
+github.com/hslam/ftok v1.0.0/go.mod h1:2ABEYCrEJ3EVr7SPlNCMEyGJUJye2mB9Wc9t3ET7Ngg=
+github.com/hslam/mmap v1.0.0 h1:GSp55lZrPDhctob3yE0SqESBjzgCn9cP4iu4Pmmm+gE=
+github.com/hslam/mmap v1.0.0/go.mod h1:mtuj54WoaupC65QteY9RubXVPkQT86Q/Xj0WPzRefFw=
